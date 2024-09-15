@@ -3,6 +3,7 @@ import streamlit as st
 
 client = OpenAI(api_key=st.secrets['OPENAI_API_KEY'])
 
+st.title("💬 Philosophy Chatbot")
 def generate_content(prompt):
   response = client.chat.completions.create(
       model = 'gpt-4o-mini',
