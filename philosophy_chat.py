@@ -16,7 +16,7 @@ with st.sidebar:
     selected_philosopher = option_menu("Choose your Philosopher", 
                         ["Socrates", "Diogenes", "Confucius", "Friedrich Nietzsche", 
                          "Immanuel Kant", "Simone de Beauvoir"], 
-                        default_index=1)
+                        default_index=0)
     st.write("You selected: ", selected_philosopher)
 
     # Descriptions for each philosopher
