@@ -3,8 +3,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from PIL import Image
-from io import BytesIO
-import requests
+import os
 
 # Initialize OpenAI client
 client = OpenAI(api_key=st.secrets['OPENAI_API_KEY'])
@@ -12,27 +11,11 @@ client = OpenAI(api_key=st.secrets['OPENAI_API_KEY'])
 # Initialize VADER sentiment analyzer
 analyzer = SentimentIntensityAnalyzer() 
 
-# Dictionary containing image URLs from Google Drive for each philosopher and emotion
-image_urls = {
-    "Socrates": {
-        "neutral": "https://drive.google.com/uc?export=view&id=1Ug6VKXp0wQkB7S4VvQYRdj7mqSp0d70m",
-        "amused": "https://drive.google.com/uc?export=view&id=1yOmvnCqW597o30ROxqfbBkEdb50mETCr",
-        "curious": "https://drive.google.com/uc?export=view&id=15yF6NV_x_oLgiz4z9cS3nk_olRL2ahjD",
-        "irritated": "https://drive.google.com/uc?export=view&id=1O350U9TUYsNW7EaH-nOIPFGvKTM3p1Xp"
-    },
-    "Immanuel Kant": {
-        "neutral": "https://drive.google.com/uc?export=view&id=1-7pvAvh8iFRWQsuAz74bVo_qnfHEg0nW",
-        "amused": "https://drive.google.com/uc?export=view&id=1Ku9_6kpFE0UW_XubDhbZRKM6ZZMMHPgs",
-        "curious": "https://drive.google.com/uc?export=view&id=1CZ3e1Jo6M2f12l3m0RBiKWlOL7Ioa4SV",
-        "irritated": "https://drive.google.com/uc?export=view&id=1-ic_H0pKMyNr9K1yxWAQdJ8aI-lF7-h5"
-    },
-}
-
 # Sidebar selection
 with st.sidebar:
     selected_philosopher = option_menu("Choose your Philosopher", 
-                        ["Socrates", "Diogenes", "Confucius", "Friedrich Nietzsche", "Immanuel Kant", 
-                         "Michel Foucault", "Simone de Beauvoir"], 
+                        ["Socrates", "Diogenes", "Confucius", "Friedrich Nietzsche", 
+                         "Immanuel Kant", "Simone de Beauvoir"], 
                         default_index=1)
     st.write("You selected: ", selected_philosopher)
 
@@ -47,8 +30,6 @@ with st.sidebar:
         st.write("Friedrich Nietzsche was a German philosopher known for his critique of traditional morality and religion. He is famous for his concept of the Übermensch and the declaration that 'God is dead.'")
     elif selected_philosopher == "Immanuel Kant":
         st.write("Immanuel Kant was an 18th-century German philosopher whose work on epistemology and ethics had a profound influence on modern philosophy. He is best known for his theory of the categorical imperative.")
-    elif selected_philosopher == "Michel Foucault":
-        st.write("Michel Foucault was a French philosopher who explored the relationships between power, knowledge, and social institutions. His work focuses on how power dynamics influence societal norms, especially in prisons, schools, and hospitals.")
     elif selected_philosopher == "Simone de Beauvoir":
         st.write("Simone de Beauvoir was a French existentialist philosopher, writer, and feminist. She is best known for her work 'The Second Sex,' in which she analyzed women's oppression and the construction of gender roles.")
 
@@ -91,7 +72,6 @@ if "philosopher_chats" not in st.session_state:
         "Confucius": [],
         "Friedrich Nietzsche": [],
         "Immanuel Kant": [],
-        "Michel Foucault": [],
         "Simone de Beauvoir": []
     }
 
@@ -122,19 +102,15 @@ def ai_function(prompt):
         }
     )
 
-    # Only display images for Socrates and Immanuel Kant
-    if selected_philosopher in image_urls:
-        image_url = image_urls[selected_philosopher].get(emotion, "")
-        if image_url:
-            image_response = requests.get(image_url)
-            if image_response.status_code == 200:
-                image = Image.open(BytesIO(image_response.content))
-                
-                left_co, cent_co,last_co = st.columns(3)
-                with cent_co:
-                    st.image(image, caption=f"{selected_philosopher} feeling {emotion}", use_column_width=False, width=300)
-            else:
-                st.write("Failed to load image.")
+    image_filename = f"./philosopher_images/{selected_philosopher.lower()}_{emotion}.png"
+        
+    # Check if the file exists
+    if os.path.exists(image_filename):
+        # Load and display the image
+        image = Image.open(image_filename)
+        st.image(image, caption=f"{selected_philosopher} feeling {emotion}", use_column_width=False, width=400)
+    else:
+        st.write(f"No image found for {selected_philosopher} feeling {emotion}.")
 
     # Display and store the assistant's message
     with st.chat_message('assistant'):
