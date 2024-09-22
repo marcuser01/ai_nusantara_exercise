@@ -108,7 +108,7 @@ def ai_function(prompt):
     if os.path.exists(image_filename):
         # Load and display the image
         image = Image.open(image_filename)
-        st.image(image, caption=f"{selected_philosopher} feeling {emotion}", use_column_width=False, width=400)
+        st.image(image, caption=f"{selected_philosopher} feeling {emotion}", use_column_width=False, width=256)
     else:
         st.write(f"No image found for {selected_philosopher} feeling {emotion}.")
 
