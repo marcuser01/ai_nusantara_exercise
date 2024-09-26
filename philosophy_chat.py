@@ -89,7 +89,11 @@ if not st.session_state.philosopher_chats[selected_philosopher]:
         'content': f"I am {selected_philosopher}. How can I help you?"
     })
 
-
+# Display chat messages from the current philosopher's history
+for message in st.session_state.philosopher_chats[selected_philosopher]:
+    with st.chat_message(message['role']):
+        st.markdown(message['content'])
+        
 # Function to process user input and get AI response
 def ai_function(prompt):
     response = generate_content(prompt)
