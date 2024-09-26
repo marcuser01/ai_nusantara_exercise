@@ -78,13 +78,12 @@ if "philosopher_chats" not in st.session_state:
 
 # Define the path for the neutral image based on the selected philosopher
 neutral_image_path = f"./philosopher_images/{selected_philosopher.lower()}_neutral.png"
-
+if os.path.exists(neutral_image_path):
+        image = Image.open(neutral_image_path)
+        st.image(image, caption=f"{selected_philosopher}", use_column_width=False, width=300)
+        
 # If there's no history for the selected philosopher, initialize it with a greeting
 if not st.session_state.philosopher_chats[selected_philosopher]:
-    # Check if the neutral image exists before displaying it
-    if os.path.exists(neutral_image_path):
-        image = Image.open(neutral_image_path)
-        st.image(image, caption=f"{selected_philosopher}", use_column_width=False, width=400)
     
     # Add the greeting message
     st.session_state.philosopher_chats[selected_philosopher].append({
