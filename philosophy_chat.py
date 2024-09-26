@@ -75,17 +75,23 @@ if "philosopher_chats" not in st.session_state:
         "Simone de Beauvoir": []
     }
 
+
+# Define the path for the neutral image based on the selected philosopher
+neutral_image_path = f"./philosopher_images/{selected_philosopher.lower()}_neutral.png"
+
 # If there's no history for the selected philosopher, initialize it with a greeting
 if not st.session_state.philosopher_chats[selected_philosopher]:
+    # Check if the neutral image exists before displaying it
+    if os.path.exists(neutral_image_path):
+        image = Image.open(neutral_image_path)
+        st.image(image, caption=f"{selected_philosopher}", use_column_width=False, width=400)
+    
+    # Add the greeting message
     st.session_state.philosopher_chats[selected_philosopher].append({
         'role': 'assistant',
         'content': f"I am {selected_philosopher}. How can I help you?"
     })
 
-# Display chat messages from the current philosopher's history
-for message in st.session_state.philosopher_chats[selected_philosopher]:
-    with st.chat_message(message['role']):
-        st.markdown(message['content'])
 
 # Function to process user input and get AI response
 def ai_function(prompt):
