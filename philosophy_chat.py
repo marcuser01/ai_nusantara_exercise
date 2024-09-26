@@ -84,8 +84,6 @@ if os.path.exists(neutral_image_path):
         
 # If there's no history for the selected philosopher, initialize it with a greeting
 if not st.session_state.philosopher_chats[selected_philosopher]:
-    
-    # Add the greeting message
     st.session_state.philosopher_chats[selected_philosopher].append({
         'role': 'assistant',
         'content': f"I am {selected_philosopher}. How can I help you?"
